@@ -38,21 +38,27 @@ class ThoughtInbox(MainWindow):
         self.refresh()
         
     def refresh(self):
-        
+            
+        thoughts = self.get_current_thoughts()
+            
+        self.display_thoughts(thoughts)
+    
+    def display_thoughts(self, thoughts):
         for widget in self.scroll_frame.winfo_children():
             widget.destroy()
             
+        for text_id, text, date, in thoughts:
+            card = ThoughtCard(self.scroll_frame, text_id,text, date, self.delete_thought, self.edit_thought)
+            card.pack(fill = "x", padx = 6, pady = 6) 
+            
+    def get_current_thoughts(self):
         query = self.input_panel.search_entry.get().strip()    
         
         if query:
-            thoughts = self.db.search(query)
-        else:    
-            thoughts = self.db.get_thoughts()
+            return self.db.search(query)
         
-        for text_id, text, date, in thoughts:
-            card = ThoughtCard(self.scroll_frame, text_id,text, date, self.delete_thought, self.edit_thought)
-            card.pack(fill = "x", padx = 6, pady = 6)
-            
+        return self.db.get_thoughts()
+        
             
     def delete_thought(self, thought_id):
         self.db.delete(thought_id)
