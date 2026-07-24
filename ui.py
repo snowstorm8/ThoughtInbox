@@ -31,3 +31,18 @@ class MainWindow(ctk.CTk):
         self.scroll_frame = ctk.CTkScrollableFrame(self, width = 620, height = 250)
         
         self.scroll_frame.pack(fill = "both", expand = True, padx = 20, pady = (0, 20))
+        
+class ThoughtCard(ctk.CTkFrame):
+    def __init__ (self, parent, thought, date):
+        super().__init__(parent)
+        
+        self.pack(fill = "x", pady = 6, padx = 6)
+        
+        self.thought_label = ctk.CTkLabel(self, text = thought, anchor = "w", justify = "left", wraplength = 500, font = ("Arial", 12))
+        
+        self.thought_label.pack(anchor = "w", padx = 15, pady = (10, 4))
+        
+        self.date_label = ctk.CTkLabel(self, text = date, text_color = "gray")
+        
+        self.date_label.pack(anchor = "w", padx = 15, pady = (0, 10))
+        
