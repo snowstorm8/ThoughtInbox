@@ -43,6 +43,3 @@ class ThoughtCard(ctk.CTkFrame):
         self.thought_label.pack(anchor = "w", padx = 15, pady = (10, 4))
         
         self.date_label = ctk.CTkLabel(self, text = date, text_color = "gray")
-        
-        self.date_label.pack(anchor = "w", padx = 15, pady = (0, 10))
-        

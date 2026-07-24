@@ -33,4 +33,5 @@ class ThoughtInbox(MainWindow):
         thoughts = self.db.get_thoughts()
         
         for _, text, date, in thoughts:
-            ThoughtCard(self.scroll_frame, text, date)
+            card = ThoughtCard(self.scroll_frame, text, date)
+            card.pack(fill = "x", padx = 6, pady = 6)
