@@ -12,13 +12,9 @@ class MainWindow(ctk.CTk):
         self.title_label = ctk.CTkLabel(self, text="Thought Inbox", font=("Arial", 24, "bold"))
         self.title_label.pack(pady=(20,10))
         
-        # ------- Thought Entry ------- #
-        self.textbox = ctk.CTkTextbox(self, width = 600, height = 120)
-        self.textbox.pack()
-        
-        # ------- Save Button ------- #
-        self.save_button = ctk.CTkButton(self, text="Save Thought")
-        self.save_button.pack(pady = 15)
+        # ------- Input Panel ------- #
+        self.input_panel = InputPanel(self)
+        self.input_panel.pack(fill = "x", padx = 20)
         
         # ------- Recent Thoughts ------- #
         self.thought_label = ctk.CTkLabel(self, text="Recent Thoughts", font=("Arial", 18, "bold"))
@@ -52,4 +48,16 @@ class ThoughtCard(ctk.CTkFrame):
         self.delete_button.configure(command = lambda: self.delete_callback(self.thought_id))
         self.delete_button.pack(side = "left")
         
+class InputPanel(ctk.CTkFrame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        
+        self.pack(fill = "x", padx = 20)
+        
+        self.textbox = ctk.CTkTextbox(self, height = 120)
+        
+        self.textbox.pack(fill = "x")
+        
+        self.save_button = ctk.CTkButton(self, text = "Save Thought")
+        self.save_button.pack(pady = 15)
         

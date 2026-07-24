@@ -8,7 +8,7 @@ class ThoughtInbox(MainWindow):
         
         self.db = Database()
         
-        self.save_button.configure(command = self.save_thought)
+        self.input_panel.save_button.configure(command = self.save_thought)
         
         self.refresh()
         
@@ -16,7 +16,7 @@ class ThoughtInbox(MainWindow):
         
     def save_thought(self):
         
-        text = self.textbox.get("1.0", "end").strip()
+        text = self.input_panel.textbox.get("1.0", "end").strip()
         
         if text == "": 
             return
@@ -29,9 +29,9 @@ class ThoughtInbox(MainWindow):
             
             self.editing_id = None
             
-            self.save_button.configure(text = "Save Thought")
+            self.input_panel.save_button.configure(text = "Save Thought")
         
-        self.textbox.delete("1.0", "end")
+        self.input_panel.textbox.delete("1.0", "end")
         
         self.refresh()
         
@@ -54,7 +54,7 @@ class ThoughtInbox(MainWindow):
     def edit_thought(self, thought_id, text):
         self.editing_id = thought_id
         
-        self.textbox.delete("1.0", "end")
-        self.textbox.insert("1.0", text)
+        self.input_panel.textbox.delete("1.0", "end")
+        self.input_panel.textbox.insert("1.0", text)
         
-        self.save_button.configure(text = "Update Thought")
+        self.input_panel.save_button.configure(text = "Update Thought")
