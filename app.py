@@ -16,7 +16,8 @@ class ThoughtInbox(MainWindow):
         
         text = self.textbox.get("1.0", "end").strip()
         
-        if text == "": return
+        if text == "": 
+            return
         
         self.db.add_thought(text)
         
