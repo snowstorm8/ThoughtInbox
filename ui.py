@@ -23,13 +23,11 @@ class MainWindow(ctk.CTk):
         
         self.save_button.pack(pady = 15)
         
-        # ------- Thoughts ------- #
-        self.thoughts_label = ctk.CTkLabel(self, text = "Recent Thoughts", font = ("Arial", 24, "bold"))
+        # ------- Recent Thoughts ------- #
+        self.thought_label = ctk.CTkLabel(self, text="Recent Thoughts", font=("Arial", 18, "bold"))
         
-        self.thoughts_label.pack()
+        self.thought_label.pack(pady = (10, 5))
         
-        self.thoughts_list = ctk.CTkTextbox(self, width = 600, height = 200)
+        self.scroll_frame = ctk.CTkScrollableFrame(self, width = 620, height = 250)
         
-        self.thoughts_list.pack()
-        
-        
+        self.scroll_frame.pack(fill = "both", expand = True, padx = 20, pady = (0, 20))
