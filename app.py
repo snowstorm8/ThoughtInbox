@@ -32,6 +32,11 @@ class ThoughtInbox(MainWindow):
             
         thoughts = self.db.get_thoughts()
         
-        for _, text, date, in thoughts:
-            card = ThoughtCard(self.scroll_frame, text, date)
+        for text_id, text, date, in thoughts:
+            card = ThoughtCard(self.scroll_frame, text_id,text, date, self.delete_thought)
             card.pack(fill = "x", padx = 6, pady = 6)
+            
+            
+    def delete_thought(self, thought_id):
+        self.db.delete(thought_id)
+        self.refresh()
