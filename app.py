@@ -1,5 +1,5 @@
 from database import Database
-from ui import MainWindow
+from ui import MainWindow, ThoughtCard
 
 class ThoughtInbox(MainWindow):
     
@@ -27,13 +27,10 @@ class ThoughtInbox(MainWindow):
         
     def refresh(self):
         
-        self.thoughts_list.configure(state = "normal")
-        
-        self.thoughts_list.delete("1.0", "end")
-        
+        for widget in self.scroll_frame.winfo_children():
+            widget.destroy()
+            
         thoughts = self.db.get_thoughts()
         
-        for _, text, date in thoughts:
-            self.thoughts_list.insert("end", f"{date}\n{text}\n\n")
-            
-        self.thoughts_list.configure(state = "disabled")
+        for _, text, date, in thoughts:
+            ThoughtCard(self.scroll_frame, text, date)
