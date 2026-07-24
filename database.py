@@ -29,4 +29,6 @@ class Database:
         self.cursor.execute("DELETE FROM thoughts WHERE id = ?", (thought_id,))
         self.conn.commit()
         
-        
+    def update(self, thought_id, text):
+        self.cursor.execute("UPDATE thoughts SET text = ? WHERE id = ?", (text, thought_id))
+        self.conn.commit()

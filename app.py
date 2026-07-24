@@ -12,6 +12,8 @@ class ThoughtInbox(MainWindow):
         
         self.refresh()
         
+        self.editing_id = None
+        
     def save_thought(self):
         
         text = self.textbox.get("1.0", "end").strip()
@@ -19,7 +21,15 @@ class ThoughtInbox(MainWindow):
         if text == "": 
             return
         
-        self.db.add_thought(text)
+        if self.editing_id is None:
+            self.db.add_thought(text)
+            
+        else:
+            self.db.update(self.editing_id, text)
+            
+            self.editing_id = None
+            
+            self.save_button.configure(text = "Save Thought")
         
         self.textbox.delete("1.0", "end")
         
@@ -33,10 +43,18 @@ class ThoughtInbox(MainWindow):
         thoughts = self.db.get_thoughts()
         
         for text_id, text, date, in thoughts:
-            card = ThoughtCard(self.scroll_frame, text_id,text, date, self.delete_thought)
+            card = ThoughtCard(self.scroll_frame, text_id,text, date, self.delete_thought, self.edit_thought)
             card.pack(fill = "x", padx = 6, pady = 6)
             
             
     def delete_thought(self, thought_id):
         self.db.delete(thought_id)
         self.refresh()
+        
+    def edit_thought(self, thought_id, text):
+        self.editing_id = thought_id
+        
+        self.textbox.delete("1.0", "end")
+        self.textbox.insert("1.0", text)
+        
+        self.save_button.configure(text = "Update Thought")

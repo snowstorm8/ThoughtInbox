@@ -28,11 +28,12 @@ class MainWindow(ctk.CTk):
         self.scroll_frame.pack(fill = "both", expand = True, padx = 20, pady = (0, 20))
         
 class ThoughtCard(ctk.CTkFrame):
-    def __init__ (self, parent, thought_id, thought, date, delete_callback):
+    def __init__ (self, parent, thought_id, thought, date, delete_callback, edit_callback):
         super().__init__(parent)
         
         self.thought_id = thought_id
         self.delete_callback = delete_callback
+        self.edit_callback = edit_callback
         
         self.thought_label = ctk.CTkLabel(self, text = thought, anchor = "w", justify = "left", wraplength = 500, font = ("Arial", 12))
         self.thought_label.pack(anchor = "w", padx = 15, pady = (10, 4))
@@ -40,8 +41,15 @@ class ThoughtCard(ctk.CTkFrame):
         self.date_label = ctk.CTkLabel(self, text = date, text_color = "gray")
         self.date_label.pack(anchor = "w", padx = 15, pady = (0, 10))
         
-        self.delete_button = ctk.CTkButton(self, text = "Delete", width = 80)
+        self.buttom_frame = ctk.CTkFrame(self, fg_color = "transparent")
+        self.buttom_frame.pack(anchor = "e", padx = 15, pady = (0, 10))
+        
+        self.edit_button = ctk.CTkButton(self.buttom_frame, text = "Edit", width = 70)
+        self.edit_button.configure(command = lambda: self.edit_callback(self.thought_id, self.thought_label.cget("text")))
+        self.edit_button.pack(side = "left", padx = 5)
+        
+        self.delete_button = ctk.CTkButton(self.buttom_frame, text = "Delete", width = 70)
         self.delete_button.configure(command = lambda: self.delete_callback(self.thought_id))
-        self.delete_button.pack(anchor = "e", padx = 15, pady = (0,10))
+        self.delete_button.pack(side = "left")
         
         
