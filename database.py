@@ -32,3 +32,7 @@ class Database:
     def update(self, thought_id, text):
         self.cursor.execute("UPDATE thoughts SET text = ? WHERE id = ?", (text, thought_id))
         self.conn.commit()
+        
+    def search(self, query):
+        self.cursor.execute("SELECT id, text, created FROM thoughts WHERE text LIKE ? ORDER BY created DESC", (f"%{query}%",))
+        return self.cursor.fetchall()

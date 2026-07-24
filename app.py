@@ -10,9 +10,11 @@ class ThoughtInbox(MainWindow):
         
         self.input_panel.save_button.configure(command = self.save_thought)
         
-        self.refresh()
-        
         self.editing_id = None
+        
+        self.input_panel.search_entry.bind("<KeyRelease>", self.on_search)
+        
+        self.refresh()
         
     def save_thought(self):
         
@@ -40,7 +42,12 @@ class ThoughtInbox(MainWindow):
         for widget in self.scroll_frame.winfo_children():
             widget.destroy()
             
-        thoughts = self.db.get_thoughts()
+        query = self.input_panel.search_entry.get().strip()    
+        
+        if query:
+            thoughts = self.db.search(query)
+        else:    
+            thoughts = self.db.get_thoughts()
         
         for text_id, text, date, in thoughts:
             card = ThoughtCard(self.scroll_frame, text_id,text, date, self.delete_thought, self.edit_thought)
@@ -58,3 +65,6 @@ class ThoughtInbox(MainWindow):
         self.input_panel.textbox.insert("1.0", text)
         
         self.input_panel.save_button.configure(text = "Update Thought")
+        
+    def on_search(self, event):
+        self.refresh()

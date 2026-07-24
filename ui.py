@@ -54,6 +54,9 @@ class InputPanel(ctk.CTkFrame):
         
         self.pack(fill = "x", padx = 20)
         
+        self.search_entry = ctk.CTkEntry(self, placeholder_text = "Search thoughts...")
+        self.search_entry.pack(fill = "x", pady = (0, 10))
+        
         self.textbox = ctk.CTkTextbox(self, height = 120)
         
         self.textbox.pack(fill = "x")
