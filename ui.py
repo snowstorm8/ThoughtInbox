@@ -1,9 +1,20 @@
 import customtkinter as ctk
+from tkinter import Menu
 
 class MainWindow(ctk.CTk):
     
     def __init__(self):
         super().__init__()
+        
+        self.menu = Menu(self)
+        self.configure(menu = self.menu)
+        
+        self.file_menu = Menu(self.menu, tearoff = False)
+        self.menu.add_cascade(label = "File", menu = self.file_menu)
+        
+        self.file_menu.add_command(label = "New Thought")
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label = "Exit")
         
         self.title("Thought Inbox")
         self.geometry("700x500")
