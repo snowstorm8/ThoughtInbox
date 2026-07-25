@@ -10,11 +10,42 @@ class MainWindow(ctk.CTk):
         self.configure(menu = self.menu)
         
         self.file_menu = Menu(self.menu, tearoff = False)
-        self.menu.add_cascade(label = "File", menu = self.file_menu)
         
-        self.file_menu.add_command(label = "New Thought")
+        self.file_menu.add_command(label = "New Thought", accelerator = "Ctrl+N")
+        self.file_menu.add_command(label = "Save Thought", accelerator = "Ctrl+S")
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label = "Export...")
         self.file_menu.add_separator()
         self.file_menu.add_command(label = "Exit")
+        
+        self.menu.add_cascade(label = "File", menu = self.file_menu)
+        
+        self.edit_menu = Menu(self.menu, tearoff = False)
+        
+        self.edit_menu.add_command(label = "Find", accelerator = "Ctrl+F")
+        self.edit_menu.add_command(label = "Clear Search")
+        self.edit_menu.add_separator()
+        self.edit_menu.add_command(label = "Preferences...")
+        
+        self.menu.add_cascade(label = "Edit", menu = self.edit_menu)
+        
+        self.view_menu = Menu(self.menu, tearoff = False)
+        
+        self.view_menu.add_command(label = "Light Mode")
+        self.view_menu.add_command(label = "Dark Mode")
+        self.view_menu.add_command(label = "System Mode")
+        self.view_menu.add_separator()
+        self.view_menu.add_command(label = "Refresh")
+        
+        self.menu.add_cascade(label = "View", menu = self.view_menu)
+        
+        self.help_menu = Menu(self.menu, tearoff = False)
+        
+        self.help_menu.add_command(label = "Keyboard Shortcuts")
+        self.help_menu.add_separator()
+        self.help_menu.add_command(label = "About ThoughtInbox")
+        
+        self.menu.add_cascade(label = "Help", menu = self.help_menu)
         
         self.title("Thought Inbox")
         self.geometry("700x500")
@@ -33,6 +64,12 @@ class MainWindow(ctk.CTk):
         
         self.scroll_frame = ctk.CTkScrollableFrame(self, width = 620, height = 250)
         self.scroll_frame.pack(fill = "both", expand = True, padx = 20, pady = (0, 20))
+        
+    def set_new_thought_command(self, command):
+        self.file_menu.entryconfigure("New Thought", command = command)
+        
+    def set_exit_command(self, command):
+        self.file_menu.entryconfigure("Exit", command = command)
         
 class ThoughtCard(ctk.CTkFrame):
     def __init__ (self, parent, thought_id, thought, date, delete_callback, edit_callback):
