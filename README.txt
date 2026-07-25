@@ -9,11 +9,12 @@ Built with Python, CustomTkinter, and SQLite, the project focuses on creating a 
 - Save thoughts locally
 - View previously saved thoughts
 - SQLite database for persistent storage
+- Edit and delete thoughts
+- Search thoughts
 
 ## Planned Features
 
-- Edit and delete thoughts
-- Search and filtering
+- Thought filtering
 - Tags and categories
 - Reminder scheduling
 - Desktop notifications
