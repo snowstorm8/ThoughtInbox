@@ -16,6 +16,13 @@ class ThoughtInbox(MainWindow):
         self.status_bar = StatusBar(self)
         self.settings = Settings()
         
+        width = self.settings.get("window_width")
+        height = self.settings.get("window_height")
+        x = self.settings.get("window_x")
+        y = self.settings.get("window_y")
+        
+        self.geometry(f"{width}x{height}+{x}+{y}")
+        
         ctk.set_appearance_mode(self.settings.get("theme"))
         
         self.input_panel.save_button.configure(command = self.save_thought)
@@ -26,7 +33,7 @@ class ThoughtInbox(MainWindow):
             new = self.new_thought,
             save = self.save_thought,
             export = self.export_thoughts,
-            exit = self.destroy,
+            exit = self.close_application,
             find = self.focus_search,
             clear_search = self.clear_search,
             preferences = self.open_preferences,
@@ -46,6 +53,7 @@ class ThoughtInbox(MainWindow):
         self.bind("<Control-s>", lambda e: self.save_thought())
         self.bind("<Escape>", lambda e: self.cancel_edit())
         
+        self.protocol("WM_DELETE_WINDOW", self.close_application)
 
         self.refresh()
         
@@ -239,3 +247,13 @@ class ThoughtInbox(MainWindow):
             "About ThoughtInbox",
             command=commands["about"]
         )
+        
+    def save_window_geometry(self):
+        self.settings.set("window_width", self.winfo_width())
+        self.settings.set("window_height", self.winfo_height())
+        self.settings.set("window_x", self.winfo_x())
+        self.settings.set("window_y", self.winfo_y())
+        
+    def close_application(self):
+        self.save_window_geometry()
+        self.destroy()
