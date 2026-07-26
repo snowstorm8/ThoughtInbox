@@ -3,6 +3,8 @@ from ui import MainWindow, ThoughtCard
 from tkinter import messagebox
 import customtkinter as ctk
 from widgets.statusbar import StatusBar
+from dialogs.confirm import ConfirmDialog
+from dialogs.about import AboutDialog
 
 class ThoughtInbox(MainWindow):
     
@@ -100,7 +102,12 @@ class ThoughtInbox(MainWindow):
         messagebox.showinfo("Keyboard Shortcuts", ("New Thought: Ctrl+N\nSave: Ctrl+S\nFind: Ctrl+F\n\nExit Edit Mode: Esc"))
         
     def show_about(self):
-        messagebox.showinfo("About ThoughtInbox", ("ThoughtInbox\n\n Version 0.1\n\n Built with Python \n ~Nihar Sreeram"))
+        if hasattr(self, "_about_dialog"):
+            if self._about_dialog.winfo_exists():
+                self._about_dialog.focus()
+                return
+
+        self._about_dialog = AboutDialog(self)
         
     def cancel_edit(self):
         self.editing_id = None
@@ -138,9 +145,13 @@ class ThoughtInbox(MainWindow):
         
             
     def delete_thought(self, thought_id):
-        self.db.delete(thought_id)
-        self.status_bar.flash("🗑 Thought Deleted")
-        self.refresh()
+        dialog = ConfirmDialog(self, "Delete Thought", "Delete this thought permanently?")
+        self.wait_window(dialog)
+        
+        if dialog.result:
+            self.db.delete(thought_id)
+            self.status_bar.flash("🗑 Thought Deleted")
+            self.refresh()
         
     def edit_thought(self, thought_id, text):
         self.editing_id = thought_id

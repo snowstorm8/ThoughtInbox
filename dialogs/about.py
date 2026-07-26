@@ -1,14 +1,11 @@
 import customtkinter as ctk
+from dialogs.base_dialog import BaseDialog
 
-class AboutDialog(ctk.CTkToplevel):
+
+class AboutDialog(BaseDialog):
+
     def __init__(self, parent):
-        super().__init__(parent)
-        
-        self.title("About")
-        self.geometry("350x260")
-        self.resizable(False, False)
-        
-        self.grab_set()
+        super().__init__(parent, "About ThoughtInbox", 350, 260)
         
         ctk.CTkLabel(self, text = "ThoughtInbox", font = ("Arial", 20)).pack(pady = (20, 5))
         ctk.CTkLabel(self, text = "Version 0.1").pack()
