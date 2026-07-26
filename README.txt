@@ -65,3 +65,10 @@ python main.py
 ## License
 
 This project is licensed under the MIT License.
+
+
+## Attributions:
+Save Icon: "https://www.flaticon.com/free-icons/save" title="save icons">Save icons created by Yogi Aprelliyanto - Flaticon
+Delete Icon: "https://www.flaticon.com/free-icons/trash" title="trash icons">Trash icons created by Magnific - Flaticon
+Edit Icon: "https://www.flaticon.com/free-icons/edit" title="edit icons">Edit icons created by Kiranshastry - Flaticon
+Search Icon: "https://www.flaticon.com/free-icons/search" title="search icons">Search icons created by Catalin Fertu - Flaticon
