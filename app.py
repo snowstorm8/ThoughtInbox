@@ -5,6 +5,7 @@ import customtkinter as ctk
 from widgets.statusbar import StatusBar
 from dialogs.confirm import ConfirmDialog
 from dialogs.about import AboutDialog
+from settings import Settings
 
 class ThoughtInbox(MainWindow):
     
@@ -13,6 +14,9 @@ class ThoughtInbox(MainWindow):
         
         self.db = Database()
         self.status_bar = StatusBar(self)
+        self.settings = Settings()
+        
+        ctk.set_appearance_mode(self.settings.get("theme"))
         
         self.input_panel.save_button.configure(command = self.save_thought)
         
@@ -92,11 +96,17 @@ class ThoughtInbox(MainWindow):
     def light_theme(self):
         ctk.set_appearance_mode("Light")
         
+        self.settings.set("theme", "Light")
+        
     def dark_theme(self):
         ctk.set_appearance_mode("Dark")
         
+        self.settings.set("theme", "Dark")
+        
     def system_theme(self):
         ctk.set_appearance_mode("System")
+        
+        self.settings.set("theme", "System")
         
     def show_shortcuts(self):
         messagebox.showinfo("Keyboard Shortcuts", ("New Thought: Ctrl+N\nSave: Ctrl+S\nFind: Ctrl+F\n\nExit Edit Mode: Esc"))
