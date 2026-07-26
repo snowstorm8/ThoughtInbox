@@ -6,6 +6,9 @@ from widgets.statusbar import StatusBar
 from dialogs.confirm import ConfirmDialog
 from dialogs.about import AboutDialog
 from settings import Settings
+from tkinter import filedialog
+from utils.exporter import Exporter
+from pathlib import Path
 
 class ThoughtInbox(MainWindow):
     
@@ -89,8 +92,28 @@ class ThoughtInbox(MainWindow):
         self.refresh()
         
     def export_thoughts(self):
-        print("Coming soon")
+        thoughts = self.db.get_thoughts()
         
+        if not thoughts:
+            self.status_bar.flash("No thoughts to export")
+            return
+        
+        path = filedialog.asksaveasfilename(title = "Export Thoughts", defaultextension = ".md", filetypes = [("Markdown", "*.md"), ("JSON", "*.json"), ("Text", "*.txt")])
+        
+        if not path:
+            return
+        
+        suffix = Path(path).suffix.lower()
+        
+        if suffix == ".txt":
+            Exporter.export_txt(path, thoughts)
+        elif suffix == ".json":
+            Exporter.export_json(path, thoughts)
+        else:
+            Exporter.export_markdown(path, thoughts)
+            
+        self.status_bar.flash("Thoughts exported successfully.")
+
     def focus_search(self):
         self.input_panel.search_entry.focus()
     

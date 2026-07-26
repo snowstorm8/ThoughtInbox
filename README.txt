@@ -11,6 +11,9 @@ Built with Python, CustomTkinter, and SQLite, the project focuses on creating a 
 - SQLite database for persistent storage
 - Edit and delete thoughts
 - Search thoughts
+- Dark/light themes
+- Persistent Settings
+- Export thoughts in md, txt and json formats
 
 ## Planned Features
 
@@ -18,8 +21,6 @@ Built with Python, CustomTkinter, and SQLite, the project focuses on creating a 
 - Tags and categories
 - Reminder scheduling
 - Desktop notifications
-- Dark/light themes
-- Markdown support
 - AI summaries
 - Semantic search
 - Encrypted thought storage
@@ -39,7 +40,9 @@ ThoughtInbox/
 ├── app.py
 ├── database.py
 ├── ui.py
+├── settings.py
 └── thoughts.db
+
 ```
 
 ## Getting Started
