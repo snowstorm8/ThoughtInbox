@@ -2,6 +2,7 @@ from database import Database
 from ui import MainWindow, ThoughtCard
 from tkinter import messagebox
 import customtkinter as ctk
+from widgets.statusbar import StatusBar
 
 class ThoughtInbox(MainWindow):
     
@@ -9,6 +10,7 @@ class ThoughtInbox(MainWindow):
         super().__init__()
         
         self.db = Database()
+        self.status_bar = StatusBar(self)
         
         self.input_panel.save_button.configure(command = self.save_thought)
         
@@ -65,6 +67,8 @@ class ThoughtInbox(MainWindow):
             self.editing_id = None
             
             self.input_panel.save_button.configure(text = "Save Thought")
+            
+            self.status_bar.flash("✓ Thought Saved")
         
         self.input_panel.textbox.delete("1.0", "end")
         
@@ -125,13 +129,17 @@ class ThoughtInbox(MainWindow):
         query = self.input_panel.search_entry.get().strip()    
         
         if query:
-            return self.db.search(query)
+            thoughts = self.db.search(query)
+            self.status_bar.set_status(f"{len(thoughts)} thoughts")
+            return thoughts
         
+        self.status_bar.set_status("Ready")
         return self.db.get_thoughts()
         
             
     def delete_thought(self, thought_id):
         self.db.delete(thought_id)
+        self.status_bar.flash("🗑 Thought Deleted")
         self.refresh()
         
     def edit_thought(self, thought_id, text):
