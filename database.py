@@ -36,3 +36,6 @@ class Database:
     def search(self, query):
         self.cursor.execute("SELECT id, text, created FROM thoughts WHERE text LIKE ? ORDER BY created DESC", (f"%{query}%",))
         return self.cursor.fetchall()
+    
+    def close(self):
+        self.conn.close()

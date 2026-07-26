@@ -9,6 +9,8 @@ from settings import Settings
 from tkinter import filedialog
 from utils.exporter import Exporter
 from pathlib import Path
+from utils.backups import BackupManager
+from shutil import copy2
 
 class ThoughtInbox(MainWindow):
     
@@ -36,6 +38,7 @@ class ThoughtInbox(MainWindow):
             new = self.new_thought,
             save = self.save_thought,
             export = self.export_thoughts,
+            restore = self.restore_thoughts,
             exit = self.close_application,
             find = self.focus_search,
             clear_search = self.clear_search,
@@ -113,6 +116,29 @@ class ThoughtInbox(MainWindow):
             Exporter.export_markdown(path, thoughts)
             
         self.status_bar.flash("Thoughts exported successfully.")
+        
+    def restore_thoughts(self):
+        backup = filedialog.askopenfilename(title = "Restore Backup", initialdir = "backups", filetypes = [("Database", "*.db")])
+        
+        if not backup:
+            return
+        
+        dialog = ConfirmDialog(self, "Restore Backup", "This will replace your current database.\nContinue?")
+        
+        self.wait_window(dialog)
+        
+        if not dialog.result:
+            return
+        
+        self.db.close()
+        
+        copy2(backup, "thoughts.db")
+        
+        self.db = Database()
+        
+        self.refresh()
+        
+        self.status_bar.flash("Backup restored successfully.")
 
     def focus_search(self):
         self.input_panel.search_entry.focus()
@@ -220,6 +246,11 @@ class ThoughtInbox(MainWindow):
             "Export...",
             command=commands["export"]
         )
+        
+        self.file_menu.entryconfigure(
+            "Restore Backup...",
+            command=commands["restore"]
+        )
 
         self.file_menu.entryconfigure(
             "Exit",
@@ -279,4 +310,5 @@ class ThoughtInbox(MainWindow):
         
     def close_application(self):
         self.save_window_geometry()
+        BackupManager.create_backup()
         self.destroy()

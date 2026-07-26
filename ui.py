@@ -19,6 +19,8 @@ class MainWindow(ctk.CTk):
         self.file_menu.add_separator()
         self.file_menu.add_command(label = "Export...")
         self.file_menu.add_separator()
+        self.file_menu.add_command(label = "Restore Backup...")
+        self.file_menu.add_separator()
         self.file_menu.add_command(label = "Exit")
         
         self.menu.add_cascade(label = "File", menu = self.file_menu)
