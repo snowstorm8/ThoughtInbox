@@ -1,10 +1,13 @@
 import customtkinter as ctk
 from tkinter import Menu
+from PIL import Image
 
 class MainWindow(ctk.CTk):
     
     def __init__(self):
         super().__init__()
+        
+        self.iconbitmap("assets/inbox.ico")
         
         self.menu = Menu(self)
         self.configure(menu = self.menu)
@@ -79,6 +82,9 @@ class ThoughtCard(ctk.CTkFrame):
         self.delete_callback = delete_callback
         self.edit_callback = edit_callback
         
+        self.edit_icon = ctk.CTkImage(light_image = Image.open("assets/edit_icon.png"), dark_image = Image.open("assets/edit_icon.png"), size = (18, 18))
+        self.delete_icon = ctk.CTkImage(light_image = Image.open("assets/delete_icon.png"), dark_image = Image.open("assets/delete_icon.png"), size = (18, 18))
+        
         self.thought_label = ctk.CTkLabel(self, text = thought, anchor = "w", justify = "left", wraplength = 500, font = ("Arial", 12))
         self.thought_label.pack(anchor = "w", padx = 15, pady = (10, 4))
         
@@ -90,10 +96,12 @@ class ThoughtCard(ctk.CTkFrame):
         
         self.edit_button = ctk.CTkButton(self.buttom_frame, text = "Edit", width = 70)
         self.edit_button.configure(command = lambda: self.edit_callback(self.thought_id, self.thought_label.cget("text")))
+        self.edit_button.configure(image = self.edit_icon, compound = "left")
         self.edit_button.pack(side = "left", padx = 5)
         
         self.delete_button = ctk.CTkButton(self.buttom_frame, text = "Delete", width = 70)
         self.delete_button.configure(command = lambda: self.delete_callback(self.thought_id))
+        self.delete_button.configure(image = self.delete_icon, compound = "left")
         self.delete_button.pack(side = "left")
         
 class InputPanel(ctk.CTkFrame):
@@ -102,6 +110,8 @@ class InputPanel(ctk.CTkFrame):
         
         self.pack(fill = "x", padx = 20)
         
+        self.search_icon = ctk.CTkImage(light_image = Image.open("assets/search_icon.png"), dark_image = Image.open("assets/search_icon.png"), size = (18, 18))
+        
         self.search_entry = ctk.CTkEntry(self, placeholder_text = "Search thoughts...")
         self.search_entry.pack(fill = "x", pady = (0, 10))
         
@@ -109,6 +119,9 @@ class InputPanel(ctk.CTkFrame):
         
         self.textbox.pack(fill = "x")
         
+        self.save_icon = ctk.CTkImage(light_image = Image.open("assets/save_icon.png"), dark_image = Image.open("assets/save_icon.png"), size = (18, 18))
+        
         self.save_button = ctk.CTkButton(self, text = "Save Thought")
         self.save_button.pack(pady = 15)
+        self.save_button.configure(image = self.save_icon, compound = "left")
         

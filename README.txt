@@ -72,3 +72,4 @@ Save Icon: "https://www.flaticon.com/free-icons/save" title="save icons">Save ic
 Delete Icon: "https://www.flaticon.com/free-icons/trash" title="trash icons">Trash icons created by Magnific - Flaticon
 Edit Icon: "https://www.flaticon.com/free-icons/edit" title="edit icons">Edit icons created by Kiranshastry - Flaticon
 Search Icon: "https://www.flaticon.com/free-icons/search" title="search icons">Search icons created by Catalin Fertu - Flaticon
+Icon: "https://www.flaticon.com/free-icons/inbox" title="inbox icons">Inbox icons created by Magnific - Flaticon
