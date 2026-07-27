@@ -1,4 +1,4 @@
-from base_dialog import BaseDialog
+from dialogs.base_dialog import BaseDialog
 import customtkinter as ctk
 
 class PreferencesDialog(BaseDialog):
