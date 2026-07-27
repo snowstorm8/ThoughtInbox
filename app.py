@@ -22,6 +22,9 @@ class ThoughtInbox(MainWindow):
         self.status_bar = StatusBar(self)
         self.settings = Settings()
         
+        self.undo_stack = []
+        self.undo_timer = None
+        
         width = self.settings.get("window_width")
         height = self.settings.get("window_height")
         x = self.settings.get("window_x")
@@ -217,9 +220,39 @@ class ThoughtInbox(MainWindow):
         self.wait_window(dialog)
         
         if dialog.result:
+            self.undo_stack.append(self.db.get_thought(thought_id))
             self.db.delete(thought_id)
-            self.status_bar.flash("🗑 Thought Deleted")
             self.refresh()
+            self.show_undo()
+            
+    def show_undo(self):
+        self.status_bar.set_status("🗑 Thought Deleted")
+        
+        self.status_bar.show_undo(self.undo_delete)
+        
+        if self.undo_timer is not None:
+            self.after_cancel(self.undo_timer)
+            
+        self.undo_timer = self.after(5000, self.expire_undo)
+        
+    def expire_undo(self):
+        self.undo_stack.pop()
+        self.status_bar.hide_undo()
+        self.status_bar.set_status("Ready")
+        
+    def undo_delete(self):
+        if len(self.undo_stack) == 0:
+            return
+        
+        _, text, created = self.undo_stack.pop()
+        
+        self.db.restore_thought(text, created)
+        
+        self.status_bar.hide_undo()
+        
+        self.status_bar.flash("Thought Restored")
+        
+        self.refresh()
         
     def edit_thought(self, thought_id, text):
         self.editing_id = thought_id

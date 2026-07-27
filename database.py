@@ -20,10 +20,17 @@ class Database:
         self.cursor.execute("INSERT INTO thoughts(text) VALUES(?)", (text,))
         self.conn.commit()
         
+    def restore_thought(self, text, created):
+        self.cursor.execute("INSERT INTO thoughts(text) VALUES(?)", (text, created))
+        self.conn.commit()    
     def get_thoughts(self):
         self.cursor.execute("SELECT id, text, created FROM thoughts ORDER BY created DESC")
         
         return self.cursor.fetchall()
+    
+    def get_thought(self, thought_id):
+        self.cursor.execute("SELECT id, text, created FROM thoughts WHERE id = ?", (thought_id,))
+        return self.cursor.fetchone()
     
     def delete(self, thought_id):
         self.cursor.execute("DELETE FROM thoughts WHERE id = ?", (thought_id,))
