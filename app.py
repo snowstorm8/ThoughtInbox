@@ -5,6 +5,7 @@ import customtkinter as ctk
 from widgets.statusbar import StatusBar
 from dialogs.confirm import ConfirmDialog
 from dialogs.about import AboutDialog
+from dialogs.preferences import PreferencesDialog
 from settings import Settings
 from tkinter import filedialog
 from utils.exporter import Exporter
@@ -148,7 +149,7 @@ class ThoughtInbox(MainWindow):
         self.refresh()
         
     def open_preferences(self):
-        print("Coming soon")
+        PreferencesDialog(self)
         
     def light_theme(self):
         ctk.set_appearance_mode("Light")
