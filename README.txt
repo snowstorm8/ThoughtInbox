@@ -16,11 +16,12 @@ Built with Python, CustomTkinter, and SQLite, the project focuses on creating a 
 - Export thoughts in md, txt and json formats
 - Undo delete
 - Favorites
+- Tags
 - Thought filtering
+- Autosave
 
 ## Planned Features
 
-- Tags and categories
 - Reminder scheduling
 - Desktop notifications
 - Semantic search
