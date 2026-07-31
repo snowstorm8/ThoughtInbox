@@ -11,6 +11,7 @@ from tkinter import filedialog
 from utils.exporter import Exporter
 from pathlib import Path
 from utils.backups import BackupManager
+from utils.drafts import DraftManager
 from shutil import copy2
 import re
 
@@ -22,6 +23,15 @@ class ThoughtInbox(MainWindow):
         self.db = Database()
         self.status_bar = StatusBar(self)
         self.settings = Settings()
+        
+        draft = DraftManager.load()
+        if draft:
+            self.input_panel.textbox.insert("1.0", draft)
+            self.status_bar.flash("Draft restored")
+            
+        self.autosave_job = None
+        
+        self.input_panel.textbox.bind("<KeyRelease>", self.schedule_autosave)
         
         self.undo_stack = []
         self.undo_timer = None
@@ -93,7 +103,8 @@ class ThoughtInbox(MainWindow):
             self.editing_id = None
             
             self.input_panel.save_button.configure(text = "Save Thought")
-            
+        
+        DraftManager.clear()   
         self.input_panel.textbox.delete("1.0", "end")
         
         tags = re.findall(r"#(\w+)", text)
@@ -399,6 +410,16 @@ class ThoughtInbox(MainWindow):
             command=commands["about"]
         )
         
+    def schedule_autosave(self, event = None):
+        if self.autosave_job is not None:
+            self.after_cancel(self.autosave_job)
+        
+        self.autosave_job = self.after(1000, self.autosave)    
+    
+    def autosave(self):
+        text = self.input_panel.textbox.get("1.0", "end-1c")
+        DraftManager.save(text)
+    
     def save_window_geometry(self):
         self.settings.set("window_width", self.winfo_width())
         self.settings.set("window_height", self.winfo_height())
