@@ -14,14 +14,15 @@ Built with Python, CustomTkinter, and SQLite, the project focuses on creating a 
 - Dark/light themes
 - Persistent Settings
 - Export thoughts in md, txt and json formats
+- Undo delete
+- Favorites
+- Thought filtering
 
 ## Planned Features
 
-- Thought filtering
 - Tags and categories
 - Reminder scheduling
 - Desktop notifications
-- AI summaries
 - Semantic search
 - Encrypted thought storage
 
@@ -76,3 +77,5 @@ Delete Icon: "https://www.flaticon.com/free-icons/trash" title="trash icons">Tra
 Edit Icon: "https://www.flaticon.com/free-icons/edit" title="edit icons">Edit icons created by Kiranshastry - Flaticon
 Search Icon: "https://www.flaticon.com/free-icons/search" title="search icons">Search icons created by Catalin Fertu - Flaticon
 Icon: "https://www.flaticon.com/free-icons/inbox" title="inbox icons">Inbox icons created by Magnific - Flaticon
+Filled in Star: "https://www.flaticon.com/free-icons/star" title="star icons">Star icons created by Pixel perfect - Flaticon
+Empty Star: "https://www.flaticon.com/free-icons/star" title="star icons">Star icons created by Pixel perfect - Flaticon

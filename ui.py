@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from tkinter import Menu
+import tkinter as tk
 from PIL import Image
 
 class MainWindow(ctk.CTk):
@@ -40,6 +41,9 @@ class MainWindow(ctk.CTk):
         self.view_menu.add_command(label = "Dark Mode")
         self.view_menu.add_command(label = "System Mode")
         self.view_menu.add_separator()
+        self.show_favorites = tk.BooleanVar(value = False)
+        self.view_menu.add_checkbutton(label = "Show Favorites", variable = self.show_favorites)
+        self.view_menu.add_separator()
         self.view_menu.add_command(label = "Refresh")
         
         self.menu.add_cascade(label = "View", menu = self.view_menu)
@@ -77,10 +81,12 @@ class MainWindow(ctk.CTk):
         self.file_menu.entryconfigure("Exit", command = command)
         
 class ThoughtCard(ctk.CTkFrame):
-    def __init__ (self, parent, thought_id, thought, date, delete_callback, edit_callback):
+    def __init__ (self, parent, thought_id, thought, date, favorite, delete_callback, edit_callback, favorite_callback):
         super().__init__(parent)
         
         self.thought_id = thought_id
+        self.favorite = favorite
+        self.favorite_callback = favorite_callback
         self.delete_callback = delete_callback
         self.edit_callback = edit_callback
         
@@ -96,6 +102,12 @@ class ThoughtCard(ctk.CTkFrame):
         self.buttom_frame = ctk.CTkFrame(self, fg_color = "transparent")
         self.buttom_frame.pack(anchor = "e", padx = 15, pady = (0, 10))
         
+        self.favorite_on = ctk.CTkImage(light_image = Image.open("assets/star_filled.png"), dark_image = Image.open("assets/star_filled.png"), size = (18, 18))
+        self.favorite_off = ctk.CTkImage(light_image = Image.open("assets/star_empty.png"), dark_image = Image.open("assets/star_empty.png"), size = (18, 18))
+        
+        self.favorite_button = ctk.CTkButton(self.buttom_frame, image = self.favorite_on if favorite else self.favorite_off, text = "", width = 35, command = self.toggle_favorite)
+        self.favorite_button.pack(side = "left", padx = (0, 5))
+        
         self.edit_button = ctk.CTkButton(self.buttom_frame, text = "Edit", width = 70)
         self.edit_button.configure(command = lambda: self.edit_callback(self.thought_id, self.thought_label.cget("text")))
         self.edit_button.configure(image = self.edit_icon, compound = "left")
@@ -105,6 +117,11 @@ class ThoughtCard(ctk.CTkFrame):
         self.delete_button.configure(command = lambda: self.delete_callback(self.thought_id))
         self.delete_button.configure(image = self.delete_icon, compound = "left")
         self.delete_button.pack(side = "left")
+        
+    def toggle_favorite(self):
+        self.favorite = not self.favorite
+        self.favorite_button.configure(image = self.favorite_on if self.favorite else self.favorite_off)
+        self.favorite_callback(self.thought_id)
         
 class InputPanel(ctk.CTkFrame):
     def __init__(self, parent):

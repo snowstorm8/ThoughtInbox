@@ -50,6 +50,7 @@ class ThoughtInbox(MainWindow):
             light = self.light_theme,
             dark = self.dark_theme,
             system = self.system_theme,
+            favorite = self.toggle_favorite_filter,
             refresh = self.refresh,
             shortcuts = self.show_shortcuts,
             about = self.show_about
@@ -189,7 +190,6 @@ class ThoughtInbox(MainWindow):
         self.refresh()
         
     def refresh(self):
-            
         thoughts = self.get_current_thoughts()
             
         self.display_thoughts(thoughts)
@@ -199,18 +199,36 @@ class ThoughtInbox(MainWindow):
             widget.destroy()
             
         for text_id, text, date, favorite in thoughts:
-            card = ThoughtCard(self.scroll_frame, text_id,text, date, self.delete_thought, self.edit_thought)
+            card = ThoughtCard(self.scroll_frame, text_id, text, date, favorite, self.delete_thought, self.edit_thought, self.toggle_favorite)
             card.pack(fill = "x", padx = 6, pady = 6) 
             
     def get_current_thoughts(self):
-        query = self.input_panel.search_entry.get().strip()    
+        query = self.input_panel.search_entry.get().strip().lower()
+        favorites_only = self.show_favorites.get()
         
         if query:
-            thoughts = self.db.search(query)
-            self.status_bar.set_status(f"{len(thoughts)} thoughts")
+            if query.lower in ("favorite", "favorites", "#favorite", "#favorites", "fav", "#fav"):
+                favorites_only = True
+                query = ""
+            thoughts = self.db.search(query, favorites_only)
+            count = len(thoughts)
+            if favorites_only:
+                self.status_bar.set_status(f"{count} favorite thoughts")
+                self.title("ThoughtInbox ★ Favorites")
+            else:
+                self.status_bar.set_status(f"{count} thoughts")
+                self.title("ThoughtInbox")
+            return thoughts
+        
+        if favorites_only:
+            thoughts = self.db.get_only_favorite()
+            count = len(thoughts)
+            self.status_bar.set_status(f"{count} favorite thoughts")
+            self.title("ThoughtInbox ★ Favorites")
             return thoughts
         
         self.status_bar.set_status("Ready")
+        self.title("ThoughtInbox")
         return self.db.get_thoughts()
         
             
@@ -266,6 +284,24 @@ class ThoughtInbox(MainWindow):
         self.input_panel.textbox.insert("1.0", text)
         
         self.input_panel.save_button.configure(text = "Update Thought")
+        
+    def toggle_favorite(self, thought_id):
+        self.db.toggle_favorite(thought_id)
+        self.refresh()
+        
+        if self.db.is_favorite(thought_id):
+            self.status_bar.flash("★ Thought added to Favorites")
+        else:
+            self.status_bar.flash("☆ Thought removed from Favorites")
+            
+    def toggle_favorite_filter(self):
+        self.refresh()
+        
+        if self.show_favorites.get():
+            self.status_bar.set_status("Showing favorites")
+        
+        else:
+            self.status_bar.flash("Showing all thoughts...")
         
     def on_search(self, event):
         self.refresh()
@@ -324,6 +360,11 @@ class ThoughtInbox(MainWindow):
         self.view_menu.entryconfigure(
             "System Mode",
             command=commands["system"]
+        )
+        
+        self.view_menu.entryconfigure(
+            "Show Favorites",
+            command=commands["favorite"]
         )
 
         self.view_menu.entryconfigure(
