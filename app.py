@@ -12,6 +12,7 @@ from utils.exporter import Exporter
 from pathlib import Path
 from utils.backups import BackupManager
 from shutil import copy2
+import re
 
 class ThoughtInbox(MainWindow):
     
@@ -84,17 +85,22 @@ class ThoughtInbox(MainWindow):
             return
         
         if self.editing_id is None:
-            self.db.add_thought(text)
+            thought_id = self.db.add_thought(text)
             
         else:
             self.db.update(self.editing_id, text)
-            
+            thought_id = self.editing_id
             self.editing_id = None
             
             self.input_panel.save_button.configure(text = "Save Thought")
             
         self.input_panel.textbox.delete("1.0", "end")
         
+        tags = re.findall(r"#(\w+)", text)
+                
+        for tag in tags:
+            self.db.assign_tag(thought_id, tag.lower())
+            
         self.refresh()
         self.status_bar.flash("✓ Thought Saved")
         
@@ -198,26 +204,37 @@ class ThoughtInbox(MainWindow):
         for widget in self.scroll_frame.winfo_children():
             widget.destroy()
             
-        for text_id, text, date, favorite in thoughts:
-            card = ThoughtCard(self.scroll_frame, text_id, text, date, favorite, self.delete_thought, self.edit_thought, self.toggle_favorite)
-            card.pack(fill = "x", padx = 6, pady = 6) 
+        for thought_id, text, date, favorite in thoughts:
+            tags = self.db.get_tags(thought_id)
+            display_text = re.sub(r"\s*#\w+", "", text).strip()
+            card = ThoughtCard(self.scroll_frame, thought_id, display_text, date, favorite, tags, self.delete_thought, self.edit_thought, self.toggle_favorite)
+            card.pack(fill = "x", padx = 3, pady = 3) 
             
     def get_current_thoughts(self):
         query = self.input_panel.search_entry.get().strip().lower()
         favorites_only = self.show_favorites.get()
         
         if query:
-            if query.lower in ("favorite", "favorites", "#favorite", "#favorites", "fav", "#fav"):
+            if query in ("favorite", "favorites", "#favorite", "#favorites", "fav", "#fav"):
                 favorites_only = True
                 query = ""
-            thoughts = self.db.search(query, favorites_only)
+            
+            if query == "#":
+                thoughts = self.db.get_tagged_thoughts()
+            elif query.startswith("#"):
+                thoughts = self.db.search_tag(query[1:])
+            else:
+                thoughts = self.db.search(query, favorites_only)
+                
             count = len(thoughts)
+            
             if favorites_only:
                 self.status_bar.set_status(f"{count} favorite thoughts")
                 self.title("ThoughtInbox ★ Favorites")
             else:
                 self.status_bar.set_status(f"{count} thoughts")
                 self.title("ThoughtInbox")
+                
             return thoughts
         
         if favorites_only:

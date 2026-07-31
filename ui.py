@@ -81,14 +81,21 @@ class MainWindow(ctk.CTk):
         self.file_menu.entryconfigure("Exit", command = command)
         
 class ThoughtCard(ctk.CTkFrame):
-    def __init__ (self, parent, thought_id, thought, date, favorite, delete_callback, edit_callback, favorite_callback):
+    def __init__ (self, parent, thought_id, thought, date, favorite, tags, delete_callback, edit_callback, favorite_callback):
         super().__init__(parent)
         
         self.thought_id = thought_id
         self.favorite = favorite
+        self.tag = tags
         self.favorite_callback = favorite_callback
         self.delete_callback = delete_callback
         self.edit_callback = edit_callback
+        
+        tag_frame = ctk.CTkFrame(self, fg_color = "transparent")
+        tag_frame.pack(anchor = "w", padx = 15, pady = (4, 2))
+        
+        for tag in tags:
+            ctk.CTkLabel(tag_frame, text = f"#{tag}").pack(side = "left", padx = 1)
         
         self.edit_icon = ctk.CTkImage(light_image = Image.open("assets/edit_icon.png"), dark_image = Image.open("assets/edit_icon.png"), size = (18, 18))
         self.delete_icon = ctk.CTkImage(light_image = Image.open("assets/delete_icon.png"), dark_image = Image.open("assets/delete_icon.png"), size = (18, 18))

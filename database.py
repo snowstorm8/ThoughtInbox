@@ -1,4 +1,5 @@
 import sqlite3
+import re
 
 class Database:
     def __init__(self):
@@ -15,7 +16,7 @@ class Database:
                             """)
         
         self.cursor.execute("""
-        CREATE TABLE IF NOT EXISTS TAGS(
+        CREATE TABLE IF NOT EXISTS tags(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT UNIQUE NOT NULL
         )
@@ -42,6 +43,7 @@ class Database:
     def add_thought(self, text):
         self.cursor.execute("INSERT INTO thoughts(text) VALUES(?)", (text,))
         self.conn.commit()
+        return self.cursor.lastrowid
         
     def restore_thought(self, text, created, favorite):
         self.cursor.execute("INSERT INTO thoughts(text, created, favorite) VALUES(?, ?)", (text, created, favorite))
@@ -132,7 +134,7 @@ class Database:
             
     def search_tag(self, tag):
         self.cursor.execute("""
-            SELECT thoughts.id, thoughts.text, thoughts.created, thoughts.favorite
+            SELECT DISTINCT thoughts.id, thoughts.text, thoughts.created, thoughts.favorite
             FROM thoughts
             JOIN thought_tags ON thoughts.id = thought_tags.thought_id
             JOIN tags ON thought_tags.tag_id = tags.id
@@ -142,5 +144,9 @@ class Database:
         
         return self.cursor.fetchall()
     
+    def get_tagged_thoughts(self):
+        self.cursor.execute("SELECT DISTINCT thoughts.id, thoughts.text, thoughts.created, thoughts.favorite FROM thoughts JOIN thought_tags ON thoughts.id = thought_tags.thought_id ORDER BY thoughts.created DESC")
+        return self.cursor.fetchall()
+        
     def close(self):
         self.conn.close()
