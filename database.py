@@ -14,6 +14,23 @@ class Database:
         )
                             """)
         
+        self.cursor.execute("""
+        CREATE TABLE IF NOT EXISTS TAGS(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT UNIQUE NOT NULL
+        )
+                            """)
+        
+        self.cursor.execute("""
+        CREATE TABLE IF NOT EXISTS thought_tags(
+            thought_id INTEGER NOT NULL,
+            tag_id INTEGER NOT NULL,
+            PRIMARY KEY (thought_id, tag_id),
+            FOREIGN KEY (thought_id) REFERENCES thoughts(id),
+            FOREIGN KEY (tag_id) REFERENCES tags(id)
+        )
+                            """)
+        
         self.conn.commit()
         
         try:
@@ -84,6 +101,46 @@ class Database:
         self.cursor.execute("SELECT favorite FROM thoughts WHERE id = ?", (thought_id,))
         result = self.cursor.fetchone()
         return bool(result[0]) if result else False
+    
+    def add_tag(self, name):
+        self.cursor.execute("INSERT OR IGNORE INTO tags(name) VALUES(?)", (name,))
+        self.conn.commit()
+        
+    def assign_tag(self, thought_id, tag_name):
+        self.add_tag(tag_name)
+        
+        self.cursor.execute("SELECT id FROM tags WHERE name = ?", (tag_name,))
+        
+        tag_id = self.cursor.fetchone()[0]
+        
+        self.cursor.execute("INSERT OR IGNORE INTO thought_tags(thought_id, tag_id) VALUES(?, ?)", (thought_id, tag_id))
+        
+        self.conn.commit()
+        
+    def get_tags(self, thought_id):
+        self.cursor.execute("SELECT tags.name FROM tags JOIN thought_tags ON tags.id = thought_tags.tag_id WHERE thought_tags.thought_id = ?", (thought_id,))
+        return [row[0] for row in self.cursor.fetchall()]
+    
+    def remove_tag(self, thought_id, tag_name):
+        self.cursor.execute("SELECT id FROM tags WHERE name = ?", (tag_name,))
+        tag_id = self.cursor.fetchone()
+        
+        if tag_id:
+            tag_id = tag_id[0]
+            self.cursor.execute("DELETE FROM thought_tags WHERE thought_id = ? AND tag_id = (SELECT id FROM tags WHERE name = ?)", (thought_id, tag_name))
+            self.conn.commit()
+            
+    def search_tag(self, tag):
+        self.cursor.execute("""
+            SELECT thoughts.id, thoughts.text, thoughts.created, thoughts.favorite
+            FROM thoughts
+            JOIN thought_tags ON thoughts.id = thought_tags.thought_id
+            JOIN tags ON thought_tags.tag_id = tags.id
+            WHERE tags.name LIKE ?
+            ORDER BY thoughts.created DESC
+        """, (f"%{tag}%",))
+        
+        return self.cursor.fetchall()
     
     def close(self):
         self.conn.close()
