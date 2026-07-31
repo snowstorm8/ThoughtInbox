@@ -198,7 +198,7 @@ class ThoughtInbox(MainWindow):
         for widget in self.scroll_frame.winfo_children():
             widget.destroy()
             
-        for text_id, text, date, in thoughts:
+        for text_id, text, date, favorite in thoughts:
             card = ThoughtCard(self.scroll_frame, text_id,text, date, self.delete_thought, self.edit_thought)
             card.pack(fill = "x", padx = 6, pady = 6) 
             
@@ -245,9 +245,9 @@ class ThoughtInbox(MainWindow):
         if len(self.undo_stack) == 0:
             return
         
-        _, text, created = self.undo_stack.pop()
+        _, text, created, favorite = self.undo_stack.pop()
         
-        self.db.restore_thought(text, created)
+        self.db.restore_thought(text, created, favorite)
         
         if self.undo_timer is not None:
             self.after_cancel(self.undo_timer)
