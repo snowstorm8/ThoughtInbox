@@ -21,7 +21,7 @@ class Database:
         self.conn.commit()
         
     def restore_thought(self, text, created):
-        self.cursor.execute("INSERT INTO thoughts(text) VALUES(?)", (text, created))
+        self.cursor.execute("INSERT INTO thoughts(text, created) VALUES(?, ?)", (text, created))
         self.conn.commit()    
     def get_thoughts(self):
         self.cursor.execute("SELECT id, text, created FROM thoughts ORDER BY created DESC")

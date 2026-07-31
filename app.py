@@ -92,11 +92,10 @@ class ThoughtInbox(MainWindow):
             
             self.input_panel.save_button.configure(text = "Save Thought")
             
-            self.status_bar.flash("✓ Thought Saved")
-        
         self.input_panel.textbox.delete("1.0", "end")
         
         self.refresh()
+        self.status_bar.flash("✓ Thought Saved")
         
     def export_thoughts(self):
         thoughts = self.db.get_thoughts()
@@ -236,9 +235,11 @@ class ThoughtInbox(MainWindow):
         self.undo_timer = self.after(5000, self.expire_undo)
         
     def expire_undo(self):
-        self.undo_stack.pop()
+        if self.undo_stack:
+            self.undo_stack.pop()
         self.status_bar.hide_undo()
         self.status_bar.set_status("Ready")
+        self.undo_timer = None
         
     def undo_delete(self):
         if len(self.undo_stack) == 0:
@@ -247,6 +248,10 @@ class ThoughtInbox(MainWindow):
         _, text, created = self.undo_stack.pop()
         
         self.db.restore_thought(text, created)
+        
+        if self.undo_timer is not None:
+            self.after_cancel(self.undo_timer)
+            self.undo_timer = None
         
         self.status_bar.hide_undo()
         
