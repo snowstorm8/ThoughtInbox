@@ -3,6 +3,9 @@ import sqlite3
 class Database:
     def __init__(self):
         self.conn = sqlite3.connect('thoughts.db')
+        
+        self.conn.execute("PRAGMA foreign_keys = ON")
+        
         self.cursor = self.conn.cursor()
         
         self.cursor.execute("""

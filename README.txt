@@ -80,3 +80,4 @@ Search Icon: "https://www.flaticon.com/free-icons/search" title="search icons">S
 Icon: "https://www.flaticon.com/free-icons/inbox" title="inbox icons">Inbox icons created by Magnific - Flaticon
 Filled in Star: "https://www.flaticon.com/free-icons/star" title="star icons">Star icons created by Pixel perfect - Flaticon
 Empty Star: "https://www.flaticon.com/free-icons/star" title="star icons">Star icons created by Pixel perfect - Flaticon
+Bell: "https://www.flaticon.com/free-icons/bell" title="bell icons">Bell icons created by Pixel perfect - Flaticon

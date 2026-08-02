@@ -7,6 +7,7 @@ from dialogs.confirm import ConfirmDialog
 from dialogs.about import AboutDialog
 from dialogs.preferences import PreferencesDialog
 from dialogs.draft_restore import RestoreDialog
+from dialogs.reminder_dialog import ReminderDialog
 from settings import Settings
 from tkinter import filedialog
 from utils.exporter import Exporter
@@ -177,6 +178,39 @@ class ThoughtInbox(MainWindow):
         self.input_panel.search_entry.delete(0, "end")
         self.refresh()
         
+    def set_reminder(self, thought_id):
+        dialog = ReminderDialog(self)
+        self.wait_window(dialog)
+        
+        if dialog.result is None:
+            return
+        
+        self.db.add_reminder(thought_id, dialog.result)
+        self.status_bar.flash("Reminder Set")
+        
+    def check_reminders(self):
+        reminders = self.db.get_due_reminders()
+        
+        for reminder in reminders:
+            reminder_id = reminder[0]
+            #thought_id = reminder[1]
+            #reminder_time = reminder[2]
+            text = reminder[3]
+            
+            self.show_reminder(reminder_id, text)
+            
+        self.after(3000, self.check_reminders)
+        
+    def show_reminders(self, reminder_id, text):
+        self.db.mark_remainder_triggered(reminder_id)
+        
+        preview = text.strip()
+        
+        if len(preview) > 100:
+            preview = preview[:100] + "..."
+            
+        messagebox.showinfo("ThoughtInbox Reminder", preview)
+        
     def open_preferences(self):
         PreferencesDialog(self)
         
@@ -227,8 +261,8 @@ class ThoughtInbox(MainWindow):
         for thought_id, text, date, favorite in thoughts:
             tags = self.db.get_tags(thought_id)
             display_text = re.sub(r"\s*#\w+", "", text).strip()
-            card = ThoughtCard(self.scroll_frame, thought_id, display_text, date, favorite, tags, self.delete_thought, self.edit_thought, self.toggle_favorite)
-            card.pack(fill = "x", padx = 3, pady = 3) 
+            card = ThoughtCard(self.scroll_frame, thought_id, display_text, date, favorite, tags, self.delete_thought, self.edit_thought, self.toggle_favorite, self.set_reminder)
+            card.pack(fill = "x", padx = 1, pady = 1) 
             
     def get_current_thoughts(self):
         query = self.input_panel.search_entry.get().strip().lower()
