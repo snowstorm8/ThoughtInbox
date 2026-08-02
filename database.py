@@ -31,6 +31,17 @@ class Database:
         )
                             """)
         
+        self.cursor.execute("""
+        CREATE TABLE IF NOT EXISTS reminders(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            thought_id INTEGER NOT NULL,
+            reminder_time TEXT NOT NULL,
+            triggered INTEGER DEFAULT 0,
+            FOREIGN KEY (thought_id) REFERENCES thoughts(id)
+            ON DELETE CASCADE
+        )
+                            """)
+        
         self.conn.commit()
         
         try:
@@ -146,6 +157,39 @@ class Database:
     def get_tagged_thoughts(self):
         self.cursor.execute("SELECT DISTINCT thoughts.id, thoughts.text, thoughts.created, thoughts.favorite FROM thoughts JOIN thought_tags ON thoughts.id = thought_tags.thought_id ORDER BY thoughts.created DESC")
         return self.cursor.fetchall()
+    
+    def add_reminder(self, thought_id, reminder_time):
+        self.cursor.execute("INSERT INTO reminders (thought_id, reminder_time) VALUES(?, ?)", (thought_id, reminder_time))
+        self.conn.commit()
+        return self.cursor.lastrowid
+    
+    def get_reminder(self, thought_id):
+        self.cursor.execute("SELECT id, reminder_time FROM reminders WHERE thought_id = ?", (thought_id,))
+        return self.cursor.fetchall()
+    
+    def delete_reminder(self, reminder_id):
+        self.cursor.execute("DELETE FROM reminders WHERE id = ?", (reminder_id,))
+        self.conn.commit()
         
+    def get_due_reminders(self):
+        self.cursor.execute(
+            """
+            SELECT reminders.id, reminders.thought_id, reminders.reminder_time, thoughts.text 
+            FROM reminders
+            
+            JOIN thoughts ON thoughts.id = reminders.thought_id
+            
+            WHERE reminders.triggered = 0 and reminders.reminder_time <= datetime('now')
+            
+            ORDER BY reminders.reminder_time
+            """
+        )
+        
+        return self.cursor.fetchall()
+    
+    def mark_reminder_triggered(self, reminder_id):
+        self.cursor.execute("UPDATE reminders SET triggered = 1 WHERE id = ?", (reminder_id,))
+        self.conn.commit()
+                
     def close(self):
         self.conn.close()
