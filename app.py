@@ -6,6 +6,7 @@ from widgets.statusbar import StatusBar
 from dialogs.confirm import ConfirmDialog
 from dialogs.about import AboutDialog
 from dialogs.preferences import PreferencesDialog
+from dialogs.draft_restore import RestoreDialog
 from settings import Settings
 from tkinter import filedialog
 from utils.exporter import Exporter
@@ -23,11 +24,6 @@ class ThoughtInbox(MainWindow):
         self.db = Database()
         self.status_bar = StatusBar(self)
         self.settings = Settings()
-        
-        draft = DraftManager.load()
-        if draft:
-            self.input_panel.textbox.insert("1.0", draft)
-            self.status_bar.flash("Draft restored")
             
         self.autosave_job = None
         
@@ -79,6 +75,19 @@ class ThoughtInbox(MainWindow):
 
         self.refresh()
         
+        self.after_idle(self.restore_dialog)
+        
+    def restore_dialog(self):
+        self.update_idletasks()
+        draft = DraftManager.load()
+        if draft:
+            dialog = RestoreDialog(self, "Restore Draft", "Restore the saved draft?")
+            self.wait_window(dialog)
+            
+            if dialog.result:
+                self.input_panel.textbox.insert("1.0", draft)
+                self.status_bar.flash("Draft restored")
+    
     def new_thought(self):
         self.editing_id = None
         
