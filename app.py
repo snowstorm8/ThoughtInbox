@@ -14,6 +14,7 @@ from utils.exporter import Exporter
 from pathlib import Path
 from utils.backups import BackupManager
 from utils.drafts import DraftManager
+from reminders.scheduler import register_task, remove_task
 from shutil import copy2
 import re
 
@@ -73,11 +74,12 @@ class ThoughtInbox(MainWindow):
         self.bind("<Escape>", lambda e: self.cancel_edit())
         
         self.protocol("WM_DELETE_WINDOW", self.close_application)
+        
+        register_task()
 
         self.refresh()
         
         self.after_idle(self.restore_dialog)
-        self.after_idle(self.check_reminders)
         
     def restore_dialog(self):
         self.update_idletasks()
@@ -190,19 +192,6 @@ class ThoughtInbox(MainWindow):
         
         self.db.add_reminder(thought_id, dialog.result)
         self.status_bar.flash("Reminder Set")
-        
-    def check_reminders(self):
-        reminders = self.db.get_due_reminders()
-        
-        for reminder in reminders:
-            reminder_id = reminder[0]
-            #thought_id = reminder[1]
-            #reminder_time = reminder[2]
-            text = reminder[3]
-            
-            self.show_reminders(reminder_id, text)
-            
-        self.after(30000, self.check_reminders)
         
     def show_reminders(self, reminder_id, text):
         self.db.mark_reminder_triggered(reminder_id)
