@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime, timezone
 
 class Database:
     def __init__(self):
@@ -38,7 +39,7 @@ class Database:
         CREATE TABLE IF NOT EXISTS reminders(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             thought_id INTEGER NOT NULL,
-            reminder_time TEXT NOT NULL,
+            reminder_time_utc TEXT NOT NULL,
             triggered INTEGER DEFAULT 0,
             FOREIGN KEY (thought_id) REFERENCES thoughts(id)
             ON DELETE CASCADE
@@ -161,13 +162,13 @@ class Database:
         self.cursor.execute("SELECT DISTINCT thoughts.id, thoughts.text, thoughts.created, thoughts.favorite FROM thoughts JOIN thought_tags ON thoughts.id = thought_tags.thought_id ORDER BY thoughts.created DESC")
         return self.cursor.fetchall()
     
-    def add_reminder(self, thought_id, reminder_time):
-        self.cursor.execute("INSERT INTO reminders (thought_id, reminder_time) VALUES(?, ?)", (thought_id, reminder_time))
+    def add_reminder(self, thought_id, reminder_time_utc):
+        self.cursor.execute("INSERT INTO reminders (thought_id, reminder_time_utc) VALUES(?, ?)", (thought_id, reminder_time_utc))
         self.conn.commit()
         return self.cursor.lastrowid
     
     def get_reminder(self, thought_id):
-        self.cursor.execute("SELECT id, reminder_time FROM reminders WHERE thought_id = ?", (thought_id,))
+        self.cursor.execute("SELECT id, reminder_time_utc FROM reminders WHERE thought_id = ?", (thought_id,))
         return self.cursor.fetchall()
     
     def delete_reminder(self, reminder_id):
@@ -177,15 +178,18 @@ class Database:
     def get_due_reminders(self):
         self.cursor.execute(
             """
-            SELECT reminders.id, reminders.thought_id, reminders.reminder_time, thoughts.text 
+            SELECT reminders.id, reminders.thought_id, reminders.reminder_time_utc, thoughts.text 
             FROM reminders
             
             JOIN thoughts ON thoughts.id = reminders.thought_id
             
-            WHERE reminders.triggered = 0 and reminders.reminder_time <= datetime('now')
+            WHERE reminders.triggered = 0 and reminders.reminder_time_utc <= ?
             
-            ORDER BY reminders.reminder_time
-            """
+            ORDER BY reminders.reminder_time_utc
+            """,
+            (
+                datetime.now(timezone.utc).isoformat(),
+            )
         )
         
         return self.cursor.fetchall()

@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timezone
 from tkinter import messagebox
 from dialogs.base_dialog import BaseDialog
 
@@ -11,7 +11,7 @@ class ReminderDialog(BaseDialog):
         self.result = None
         
         ctk.CTkLabel(self, text = "Reminder date and time").pack(pady = (25, 10))
-        ctk.CtkLabel(self, text = "Format: YYYY-MM-DD HH:MM").pack(pady = (0, 8))
+        ctk.CTkLabel(self, text = "Format: YYYY-MM-DD HH:MM").pack(pady = (0, 8))
         
         self.entry = ctk.CTkEntry(self, width = 280, placeholder_text = datetime.combine(date.today(), time(18, 0)).strftime("%Y-%m-%d %H:%M"))
         self.entry.pack(pady = (0, 20))
@@ -26,13 +26,16 @@ class ReminderDialog(BaseDialog):
         value = self.entry.get().strip()
         
         try:
-            datetime.strptime(value, "%Y-%m-%d %H:%M")
+            local_time = datetime.strptime(value, "%Y-%m-%d %H:%M")
             
         except ValueError:
             messagebox.showerror("Invalid Input", "Please enter a valid date and time in the format YYYY-MM-DD HH:MM.")
             return
         
-        self.result = value
+        local_time = local_time.astimezone()
+        utc_time = local_time.astimezone(timezone.utc)
+        
+        self.result = utc_time.isoformat()
         self.destroy()
         
     def cancel(self):

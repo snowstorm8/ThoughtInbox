@@ -116,16 +116,17 @@ class ThoughtCard(ctk.CTkFrame):
         self.favorite_button = ctk.CTkButton(self.button_frame, image = self.favorite_on if favorite else self.favorite_off, text = "", width = 35, command = self.toggle_favorite)
         self.favorite_button.pack(side = "left", padx = (0, 5))
         
-        self.bell = ctk.CTkImage(light_image = Image.open("assets/bell.png"), dark_image = Image.open("assets/bell.png"), size = (18, 18))
+        self.bell_icon = ctk.CTkImage(light_image = Image.open("assets/bell.png"), dark_image = Image.open("assets/bell.png"), size = (18, 18))
         
-        ctk.CTkButton(self.button_frame, image = self.bell, text = "", width = 35, command = lambda: self.set_reminder).pack(side = "left", padx = (0, 5))
+        self.reminder_button = ctk.CTkButton(self.button_frame, image = self.bell_icon, text = "", width = 35, command = lambda: self.reminder_callback(self.thought_id))
+        self.reminder_button.pack(side = "left", padx = (0, 5))
         
-        self.edit_button = ctk.CTkButton(self.buttom_frame, text = "Edit", width = 70)
+        self.edit_button = ctk.CTkButton(self.button_frame, text = "Edit", width = 70)
         self.edit_button.configure(command = lambda: self.edit_callback(self.thought_id, self.thought_label.cget("text")))
         self.edit_button.configure(image = self.edit_icon, compound = "left")
         self.edit_button.pack(side = "left", padx = 5)
         
-        self.delete_button = ctk.CTkButton(self.buttom_frame, text = "Delete", width = 70)
+        self.delete_button = ctk.CTkButton(self.button_frame, text = "Delete", width = 70)
         self.delete_button.configure(command = lambda: self.delete_callback(self.thought_id))
         self.delete_button.configure(image = self.delete_icon, compound = "left")
         self.delete_button.pack(side = "left")

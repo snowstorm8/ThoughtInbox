@@ -77,6 +77,7 @@ class ThoughtInbox(MainWindow):
         self.refresh()
         
         self.after_idle(self.restore_dialog)
+        self.after_idle(self.check_reminders)
         
     def restore_dialog(self):
         self.update_idletasks()
@@ -88,6 +89,8 @@ class ThoughtInbox(MainWindow):
             if dialog.result:
                 self.input_panel.textbox.insert("1.0", draft)
                 self.status_bar.flash("Draft restored")
+            else:
+                DraftManager.clear()
     
     def new_thought(self):
         self.editing_id = None
@@ -197,12 +200,12 @@ class ThoughtInbox(MainWindow):
             #reminder_time = reminder[2]
             text = reminder[3]
             
-            self.show_reminder(reminder_id, text)
+            self.show_reminders(reminder_id, text)
             
-        self.after(3000, self.check_reminders)
+        self.after(30000, self.check_reminders)
         
     def show_reminders(self, reminder_id, text):
-        self.db.mark_remainder_triggered(reminder_id)
+        self.db.mark_reminder_triggered(reminder_id)
         
         preview = text.strip()
         
