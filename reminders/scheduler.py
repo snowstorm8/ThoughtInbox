@@ -1,6 +1,11 @@
 import subprocess
+import sys
+from pathlib import Path
 
 TASK_NAME = "ThoughtInbox Reminder"
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+NOTIFIER_PATH = BASE_DIR / "reminders" / "notifier.py"
 
 def register_task():
     command = [
@@ -9,7 +14,7 @@ def register_task():
         "/TN",
         TASK_NAME,
         "/TR",
-        "python reminders/notifier.py",
+        f'"{sys.executable} {NOTIFIER_PATH}"',
         "/SC",
         "MINUTE",
         "/MO",

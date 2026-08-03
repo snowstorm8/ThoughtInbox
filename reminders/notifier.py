@@ -57,10 +57,14 @@ def show_notification(text):
         
     root = tk.Tk()
     root.withdraw()
-    
-    messagebox.showinfo("ThoughtInbox Reminder", f"Reminder: {preview}")
-    
+
+    messagebox.showinfo(
+        "ThoughtInbox Reminder",
+        preview
+    )
+
     root.destroy()
+
 def main():
     reminders = get_due_reminders()
     
