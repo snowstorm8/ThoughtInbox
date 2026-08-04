@@ -8,13 +8,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 NOTIFIER_PATH = BASE_DIR / "reminders" / "notifier.py"
 
 def register_task():
+    pythonw_path = Path(sys.executable).with_name("pythonw.exe")
+    
     command = [
         "schtasks",
         "/Create",
         "/TN",
         TASK_NAME,
         "/TR",
-        f'"{sys.executable} {NOTIFIER_PATH}"',
+        f'"{pythonw_path}" "{NOTIFIER_PATH}"',
         "/SC",
         "MINUTE",
         "/MO",
@@ -34,3 +36,7 @@ def remove_task():
     ]
     
     subprocess.run(command, check = True)
+    
+    
+if __name__ == "__main__":
+    remove_task()

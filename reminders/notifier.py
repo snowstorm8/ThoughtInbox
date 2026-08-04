@@ -2,7 +2,6 @@ import sqlite3
 from pathlib import Path
 from datetime import datetime, timezone
 from tkinter import messagebox
-import tkinter as tk
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -54,16 +53,11 @@ def show_notification(text):
     
     if len(preview) > 150:
         preview = preview[:150] + "..."
-        
-    root = tk.Tk()
-    root.withdraw()
 
     messagebox.showinfo(
         "ThoughtInbox Reminder",
         preview
     )
-
-    root.destroy()
 
 def main():
     reminders = get_due_reminders()

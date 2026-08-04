@@ -19,11 +19,11 @@ Built with Python, CustomTkinter, and SQLite, the project focuses on creating a 
 - Tags
 - Thought filtering
 - Autosave
+- Reminder scheduling
+- Desktop notifications
 
 ## Planned Features
 
-- Reminder scheduling
-- Desktop notifications
 - Semantic search
 - Encrypted thought storage
 
@@ -32,7 +32,6 @@ Built with Python, CustomTkinter, and SQLite, the project focuses on creating a 
 - Python
 - CustomTkinter
 - SQLite
-- Git
 
 ## Project Structure
 
