@@ -171,11 +171,19 @@ class Database:
         self.cursor.execute("SELECT id, reminder_time_utc FROM reminders WHERE thought_id = ?", (thought_id,))
         return self.cursor.fetchall()
     
+    def get_pending_reminder(self, thought_id):
+        self.cursor.execute("SELECT id, reminder_time_utc FROM reminders WHERE thought_id = ? AND triggered = 0 ORDER BY reminder_time_utc LIMIT 1", (thought_id,))
+        return self.cursor.fetchone()
+    
+    def update_reminder(self, reminder_id, reminder_time_utc):
+        self.cursor.execute("UPDATE reminders SET reminder_time_utc = ? WHERE id = ?", (reminder_time_utc, reminder_id))
+        self.conn.commit()
+        
     def delete_reminder(self, reminder_id):
         self.cursor.execute("DELETE FROM reminders WHERE id = ?", (reminder_id,))
         self.conn.commit()
         
-    def get_due_reminders(self):
+    def get_due_reminders(self):        
         self.cursor.execute(
             """
             SELECT reminders.id, reminders.thought_id, reminders.reminder_time_utc, thoughts.text 

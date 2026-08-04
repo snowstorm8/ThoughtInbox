@@ -2,6 +2,7 @@ import customtkinter as ctk
 from tkinter import Menu
 import tkinter as tk
 from PIL import Image
+from datetime import datetime
 
 class MainWindow(ctk.CTk):
     
@@ -81,12 +82,13 @@ class MainWindow(ctk.CTk):
         self.file_menu.entryconfigure("Exit", command = command)
         
 class ThoughtCard(ctk.CTkFrame):
-    def __init__ (self, parent, thought_id, thought, date, favorite, tags, delete_callback, edit_callback, favorite_callback, reminder_callback):
+    def __init__ (self, parent, thought_id, thought, date, favorite, tags, reminder, delete_callback, edit_callback, favorite_callback, reminder_callback):
         super().__init__(parent)
         
         self.thought_id = thought_id
         self.favorite = favorite
         self.tag = tags
+        self.reminder = reminder
         self.favorite_callback = favorite_callback
         self.delete_callback = delete_callback
         self.edit_callback = edit_callback
@@ -106,6 +108,12 @@ class ThoughtCard(ctk.CTkFrame):
         
         self.date_label = ctk.CTkLabel(self, text = date, text_color = "gray")
         self.date_label.pack(anchor = "w", padx = 15, pady = (0, 10))
+        
+        if self.reminder:
+            reminder_time = datetime.fromisoformat(self.reminder[1]).astimezone()
+            reminder_text = reminder_time.strftime("%b %d, %Y at %I:%M %p")
+            
+            ctk.CTkLabel(self, text = reminder_text).pack(anchor = "w", padx = 15, pady = (0, 5))
         
         self.button_frame = ctk.CTkFrame(self, fg_color = "transparent")
         self.button_frame.pack(anchor = "e", padx = 15, pady = (0, 10))

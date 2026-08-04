@@ -8,13 +8,14 @@ from dialogs.about import AboutDialog
 from dialogs.preferences import PreferencesDialog
 from dialogs.draft_restore import RestoreDialog
 from dialogs.reminder_dialog import ReminderDialog
+from dialogs.reminder_manage import ReminderManageDialog
 from settings import Settings
 from tkinter import filedialog
 from utils.exporter import Exporter
 from pathlib import Path
 from utils.backups import BackupManager
 from utils.drafts import DraftManager
-from reminders.scheduler import register_task, remove_task
+from reminders.scheduler import register_task
 from shutil import copy2
 import re
 
@@ -192,6 +193,34 @@ class ThoughtInbox(MainWindow):
         
         self.db.add_reminder(thought_id, dialog.result)
         self.status_bar.flash("Reminder Set")
+    
+    def handle_reminder(self, thought_id):
+        reminder = self.db.get_pending_reminder(thought_id)
+
+        if reminder is None:
+            self.set_reminder(thought_id)
+        else:
+            self.manage_reminder(reminder[0], reminder[1], thought_id)
+            
+    def manage_reminder(self, reminder_id, reminder_time_utc, thought_id):
+        dialog = ReminderManageDialog(self, reminder_time_utc)
+        self.wait_window(dialog)
+
+        if dialog.result is None:
+            return
+
+        action = dialog.result[0]
+
+        if action == "update":
+            new_time = dialog.result[1]
+            self.db.update_reminder(reminder_id, new_time)
+            self.status_bar.flash("Reminder updated.")
+
+        elif action == "delete":
+            self.db.delete_reminder(reminder_id)
+            self.status_bar.flash("Reminder deleted.")
+
+        self.refresh()
         
     def show_reminders(self, reminder_id, text):
         self.db.mark_reminder_triggered(reminder_id)
@@ -252,8 +281,9 @@ class ThoughtInbox(MainWindow):
             
         for thought_id, text, date, favorite in thoughts:
             tags = self.db.get_tags(thought_id)
+            reminder = self.db.get_pending_reminder(thought_id)
             display_text = re.sub(r"\s*#\w+", "", text).strip()
-            card = ThoughtCard(self.scroll_frame, thought_id, display_text, date, favorite, tags, self.delete_thought, self.edit_thought, self.toggle_favorite, self.set_reminder)
+            card = ThoughtCard(self.scroll_frame, thought_id, display_text, date, favorite, tags, reminder, self.delete_thought, self.edit_thought, self.toggle_favorite, self.handle_reminder)
             card.pack(fill = "x", padx = 1, pady = 1) 
             
     def get_current_thoughts(self):
