@@ -59,8 +59,8 @@ class Database:
         self.conn.commit()
         return self.cursor.lastrowid
         
-    def restore_thought(self, text, created, favorite):
-        self.cursor.execute("INSERT INTO thoughts(text, created, favorite) VALUES(?, ?)", (text, created, favorite))
+    def restore_thought(self, thought_id, text, created, favorite):
+        self.cursor.execute("INSERT INTO thoughts(id, text, created, favorite) VALUES(?, ?, ?, ?)", (thought_id, text, created, favorite))
         self.conn.commit()    
         
     def get_thoughts(self):

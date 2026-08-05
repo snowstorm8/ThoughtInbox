@@ -82,7 +82,7 @@ class MainWindow(ctk.CTk):
         self.file_menu.entryconfigure("Exit", command = command)
         
 class ThoughtCard(ctk.CTkFrame):
-    def __init__ (self, parent, thought_id, thought, date, favorite, tags, reminder, delete_callback, edit_callback, favorite_callback, reminder_callback):
+    def __init__ (self, parent, thought_id, thought, date, favorite, tags, reminder, delete_callback, edit_callback, favorite_callback, reminder_callback, tag_callback = None):
         super().__init__(parent)
         
         self.thought_id = thought_id
@@ -93,12 +93,14 @@ class ThoughtCard(ctk.CTkFrame):
         self.delete_callback = delete_callback
         self.edit_callback = edit_callback
         self.reminder_callback = reminder_callback
+        self.tag_callback = tag_callback
         
         tag_frame = ctk.CTkFrame(self, fg_color = "transparent")
         tag_frame.pack(anchor = "w", padx = 15, pady = (4, 2))
         
         for tag in tags:
-            ctk.CTkLabel(tag_frame, text = f"#{tag}").pack(side = "left", padx = 1)
+            tag_button = ctk.CTkButton(tag_frame, text = f"#{tag}", width = 60, height = 24, fg_color = "transparent", hover_color = ("gray85", "gray25"), text_color = ("gray30", "gray75"), command = lambda t = tag: self.tag_callback(t))
+            tag_button.pack(side = "left", padx = 1)
         
         self.edit_icon = ctk.CTkImage(light_image = Image.open("assets/edit_icon.png"), dark_image = Image.open("assets/edit_icon.png"), size = (18, 18))
         self.delete_icon = ctk.CTkImage(light_image = Image.open("assets/delete_icon.png"), dark_image = Image.open("assets/delete_icon.png"), size = (18, 18))

@@ -9,7 +9,9 @@ class Settings:
         "window_width": 900,
         "window_height": 700,
         "window_x": 250,
-        "window_y": 120
+        "window_y": 120,
+        "autosave": True,
+        "autosave_delay": 1000
     }
     
     def __init__(self):

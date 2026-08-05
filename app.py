@@ -184,6 +184,11 @@ class ThoughtInbox(MainWindow):
         self.input_panel.search_entry.delete(0, "end")
         self.refresh()
         
+    def search_tag(self, tag):
+        self.input_panel.search_entry.delete(0, "end")
+        self.input_panel.search_entry.insert(0, f"#{tag}")
+        self.refresh()
+        
     def set_reminder(self, thought_id):
         dialog = ReminderDialog(self)
         self.wait_window(dialog)
@@ -283,7 +288,7 @@ class ThoughtInbox(MainWindow):
             tags = self.db.get_tags(thought_id)
             reminder = self.db.get_pending_reminder(thought_id)
             display_text = re.sub(r"\s*#\w+", "", text).strip()
-            card = ThoughtCard(self.scroll_frame, thought_id, display_text, date, favorite, tags, reminder, self.delete_thought, self.edit_thought, self.toggle_favorite, self.handle_reminder)
+            card = ThoughtCard(self.scroll_frame, thought_id, display_text, date, favorite, tags, reminder, self.delete_thought, self.edit_thought, self.toggle_favorite, self.handle_reminder, self.search_tag)
             card.pack(fill = "x", padx = 1, pady = 1) 
             
     def get_current_thoughts(self):
@@ -323,14 +328,15 @@ class ThoughtInbox(MainWindow):
         self.status_bar.set_status("Ready")
         self.title("ThoughtInbox")
         return self.db.get_thoughts()
-        
             
     def delete_thought(self, thought_id):
         dialog = ConfirmDialog(self, "Delete Thought", "Delete this thought permanently?")
         self.wait_window(dialog)
         
         if dialog.result:
-            self.undo_stack.append(self.db.get_thought(thought_id))
+            thought = self.db.get_thought(thought_id).append(self.db.get_tags(thought_id))
+            thought.append(self.db.get_pending_reminder(thought_id))
+            self.undo_stack.append(thought)
             self.db.delete(thought_id)
             self.refresh()
             self.show_undo()
@@ -356,9 +362,15 @@ class ThoughtInbox(MainWindow):
         if len(self.undo_stack) == 0:
             return
         
-        _, text, created, favorite = self.undo_stack.pop()
+        thought_id, text, created, favorite, tags, reminder = self.undo_stack.pop()
         
-        self.db.restore_thought(text, created, favorite)
+        self.db.restore_thought(thought_id, text, created, favorite)
+        
+        for tag in tags:
+            self.db.add_tag(thought_id, tag)
+        
+        if reminder is not None:
+            self.db.add_reminder(thought_id, reminder[1])
         
         if self.undo_timer is not None:
             self.after_cancel(self.undo_timer)
@@ -476,10 +488,14 @@ class ThoughtInbox(MainWindow):
         )
         
     def schedule_autosave(self, event = None):
+        if not self.settings.get("autosave"):
+            return
+        
         if self.autosave_job is not None:
             self.after_cancel(self.autosave_job)
         
-        self.autosave_job = self.after(1000, self.autosave)    
+        autosave_delay = self.settings.get("autosave_delay")
+        self.autosave_job = self.after(autosave_delay, self.autosave)    
     
     def autosave(self):
         text = self.input_panel.textbox.get("1.0", "end-1c")
@@ -493,5 +509,12 @@ class ThoughtInbox(MainWindow):
         
     def close_application(self):
         self.save_window_geometry()
+        text = self.input_panel.textbox.get("1.0", "end-1c").strip()
+
+        if text:
+            DraftManager.save(text)
+        else:
+            DraftManager.clear()
+        
         BackupManager.create_backup()
         self.destroy()
