@@ -3,7 +3,6 @@ thoughts.db
 backups/
 data/
 .venv/
-tests/
 requirements.txt
 build/
 dist/
