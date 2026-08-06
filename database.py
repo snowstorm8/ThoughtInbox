@@ -2,8 +2,8 @@ import sqlite3
 from datetime import datetime, timezone
 
 class Database:
-    def __init__(self):
-        self.conn = sqlite3.connect('thoughts.db')
+    def __init__(self, db_path = "thoughts.db"):
+        self.conn = sqlite3.connect(db_path)
         
         self.conn.execute("PRAGMA foreign_keys = ON")
         
@@ -30,8 +30,8 @@ class Database:
             thought_id INTEGER NOT NULL,
             tag_id INTEGER NOT NULL,
             PRIMARY KEY (thought_id, tag_id),
-            FOREIGN KEY (thought_id) REFERENCES thoughts(id),
-            FOREIGN KEY (tag_id) REFERENCES tags(id)
+            FOREIGN KEY (thought_id) REFERENCES thoughts(id) ON DELETE CASCADE,
+            FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
         )
                             """)
         

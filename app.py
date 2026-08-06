@@ -81,7 +81,11 @@ class ThoughtInbox(MainWindow):
         self.refresh()
         
         self.after_idle(self.restore_dialog)
+        self.after(100, self.maximize_window)
         
+    def maximize_window(self):
+        self.state("zoomed")
+    
     def restore_dialog(self):
         self.update_idletasks()
         draft = DraftManager.load()
@@ -334,9 +338,12 @@ class ThoughtInbox(MainWindow):
         self.wait_window(dialog)
         
         if dialog.result:
-            thought = self.db.get_thought(thought_id).append(self.db.get_tags(thought_id))
-            thought.append(self.db.get_pending_reminder(thought_id))
-            self.undo_stack.append(thought)
+            thought = self.db.get_thought(thought_id)
+            tags = self.db.get_tags(thought_id)
+            reminder = self.db.get_pending_reminder(thought_id)
+            deleted_thought = (thought[0], thought[1], thought[2], thought[3], tags, reminder)
+            
+            self.undo_stack.append(deleted_thought)
             self.db.delete(thought_id)
             self.refresh()
             self.show_undo()
@@ -367,7 +374,7 @@ class ThoughtInbox(MainWindow):
         self.db.restore_thought(thought_id, text, created, favorite)
         
         for tag in tags:
-            self.db.add_tag(thought_id, tag)
+            self.db.assign_tag(thought_id, tag)
         
         if reminder is not None:
             self.db.add_reminder(thought_id, reminder[1])

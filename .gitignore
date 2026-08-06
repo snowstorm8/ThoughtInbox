@@ -2,3 +2,5 @@ __pycache__/
 thoughts.db
 backups/
 data/
+.venv/
+tests/

@@ -87,7 +87,7 @@ class ThoughtCard(ctk.CTkFrame):
         
         self.thought_id = thought_id
         self.favorite = favorite
-        self.tag = tags
+        self.tags = tags
         self.reminder = reminder
         self.favorite_callback = favorite_callback
         self.delete_callback = delete_callback
@@ -95,12 +95,13 @@ class ThoughtCard(ctk.CTkFrame):
         self.reminder_callback = reminder_callback
         self.tag_callback = tag_callback
         
-        tag_frame = ctk.CTkFrame(self, fg_color = "transparent")
-        tag_frame.pack(anchor = "w", padx = 15, pady = (4, 2))
-        
-        for tag in tags:
-            tag_button = ctk.CTkButton(tag_frame, text = f"#{tag}", width = 60, height = 24, fg_color = "transparent", hover_color = ("gray85", "gray25"), text_color = ("gray30", "gray75"), command = lambda t = tag: self.tag_callback(t))
-            tag_button.pack(side = "left", padx = 1)
+        if self.tags:
+            tag_frame = ctk.CTkFrame(self, fg_color = "transparent")
+            tag_frame.pack(anchor = "w", padx = 15, pady = (4, 2))
+            
+            for tag in self.tags:
+                tag_button = ctk.CTkButton(tag_frame, text = f"#{tag}", width = 60, height = 24, fg_color = "transparent", hover_color = ("gray85", "gray25"), text_color = ("gray30", "gray75"), command = lambda t = tag: self.tag_callback(t))
+                tag_button.pack(side = "left", padx = 1)
         
         self.edit_icon = ctk.CTkImage(light_image = Image.open("assets/edit_icon.png"), dark_image = Image.open("assets/edit_icon.png"), size = (18, 18))
         self.delete_icon = ctk.CTkImage(light_image = Image.open("assets/delete_icon.png"), dark_image = Image.open("assets/delete_icon.png"), size = (18, 18))
