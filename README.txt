@@ -224,11 +224,13 @@ The database class accepts an optional database path, allowing tests to operate 
 
 Reminders are stored in SQLite rather than only in application memory. Windows Task Scheduler periodically launches the packaged application in reminder mode, allowing reminders to be processed even when the main GUI is closed.
 
-## Current Status
+Current Status
 
-ThoughtInbox is a functional Windows desktop application with persistent storage, automated testing, scheduled reminders, configurable preferences, export functionality, and a packaged executable.
+ThoughtInbox is a complete and functional Windows desktop application for its intended scope.
 
-The project is considered feature-complete for its current scope. Future work would primarily focus on refactoring, improving the UI/UX, expanding test coverage, and further strengthening the application's architecture.
+The application includes persistent SQLite storage, tags, favorites, search, autosave and draft restoration, configurable preferences, multi-format export, persistent reminders, automated testing, and a standalone Windows executable.
+
+The project is considered complete for the foreseeable future. Further development, if undertaken, would focus on optional refinements such as UI/UX improvements, architectural refactoring, or additional features rather than completing the core application.
 
 ## License
 
