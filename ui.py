@@ -3,13 +3,16 @@ from tkinter import Menu
 import tkinter as tk
 from PIL import Image
 from datetime import datetime
+import sys
+from pathlib import Path
 
 class MainWindow(ctk.CTk):
     
     def __init__(self):
         super().__init__()
         
-        self.iconbitmap("assets/inbox.ico")
+        icon_path = self.resource_path("assets/inbox.ico")
+        self.iconbitmap(icon_path)
         
         self.menu = Menu(self)
         self.configure(menu = self.menu)
@@ -75,6 +78,14 @@ class MainWindow(ctk.CTk):
         self.scroll_frame = ctk.CTkScrollableFrame(self, width = 620, height = 250)
         self.scroll_frame.pack(fill = "both", expand = True, padx = 20, pady = (0, 20))
         
+    def resource_path(self, relative_path):
+        if getattr(sys, "frozen", False):
+            base_path = Path(sys._MEIPASS)
+        else:
+            base_path = Path(__file__).resolve().parent
+
+        return base_path / relative_path
+        
     def set_new_thought_command(self, command):
         self.file_menu.entryconfigure("New Thought", command = command)
         
@@ -109,7 +120,9 @@ class ThoughtCard(ctk.CTkFrame):
         self.thought_label = ctk.CTkLabel(self, text = thought, anchor = "w", justify = "left", wraplength = 500, font = ("Arial", 12))
         self.thought_label.pack(anchor = "w", padx = 15, pady = (10, 4))
         
-        self.date_label = ctk.CTkLabel(self, text = date, text_color = "gray")
+        date_modified = datetime.fromisoformat(date).astimezone()
+        date_modified = date_modified.strftime("%b %d, %Y at %I:%M %p")
+        self.date_label = ctk.CTkLabel(self, text = date_modified, text_color = "gray")
         self.date_label.pack(anchor = "w", padx = 15, pady = (0, 10))
         
         if self.reminder:

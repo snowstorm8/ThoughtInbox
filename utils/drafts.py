@@ -1,6 +1,6 @@
-from pathlib import Path
+from utils.paths import DRAFT_PATH
 
-DRAFT_FILE = Path("data/drafts.txt")
+DRAFT_FILE = DRAFT_PATH
 
 DRAFT_FILE.parent.mkdir(exist_ok = True)
 

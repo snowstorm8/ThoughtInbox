@@ -4,3 +4,8 @@ backups/
 data/
 .venv/
 tests/
+requirements.txt
+build/
+dist/
+ThoughtInbox.spec
+test.py

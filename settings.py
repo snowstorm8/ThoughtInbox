@@ -1,7 +1,7 @@
 import json
-from pathlib import Path
+from utils.paths import SETTINGS_PATH
 
-SETTINGS_FILE = Path("config/settings.json")
+SETTINGS_FILE = SETTINGS_PATH
 
 class Settings:
     DEFAULTS = {

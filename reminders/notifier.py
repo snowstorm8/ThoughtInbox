@@ -1,11 +1,9 @@
 import sqlite3
-from pathlib import Path
 from datetime import datetime, timezone
 from tkinter import messagebox
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+from utils.paths import DATABASE_PATH
 
-DATABASE_PATH = BASE_DIR / "thoughts.db"
 
 def get_due_reminders():
     connection = sqlite3.connect(DATABASE_PATH)

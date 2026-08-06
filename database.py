@@ -1,8 +1,12 @@
 import sqlite3
 from datetime import datetime, timezone
+from utils.paths import DATABASE_PATH
 
 class Database:
-    def __init__(self, db_path = "thoughts.db"):
+    def __init__(self, db_path = None):
+        if db_path is None:
+            db_path = DATABASE_PATH
+        
         self.conn = sqlite3.connect(db_path)
         
         self.conn.execute("PRAGMA foreign_keys = ON")

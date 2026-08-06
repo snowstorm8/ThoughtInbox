@@ -202,6 +202,7 @@ class ThoughtInbox(MainWindow):
         
         self.db.add_reminder(thought_id, dialog.result)
         self.status_bar.flash("Reminder Set")
+        self.refresh()
     
     def handle_reminder(self, thought_id):
         reminder = self.db.get_pending_reminder(thought_id)
